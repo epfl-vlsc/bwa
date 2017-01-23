@@ -177,6 +177,11 @@ extern "C" {
 	 * @param pes    inferred insert size distribution (output)
 	 */
 	void mem_pestat(const mem_opt_t *opt, int64_t l_pac, int n, const mem_alnreg_v *regs, mem_pestat_t pes[4]);
+  
+  mem_alnreg_v mem_align1_core(const mem_opt_t *opt, const bwt_t *bwt, const bntseq_t *bns, const uint8_t *pac, int l_seq, char *seq, void *buf);
+    
+  int mem_sam_pe_results(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, 
+        const mem_pestat_t pes[4], uint64_t id, bseq1_t s[2], mem_alnreg_v a[2], mem_aln_t aa[2][2], int n_aa[2]);
 
 #ifdef __cplusplus
 }

@@ -1040,6 +1040,59 @@ void mem_reg2sam(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, 
 	}
 }
 
+
+void mem_reg2result(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, bseq1_t *s, mem_alnreg_v *a, 
+    int extra_flag, const mem_aln_t *m, mem_aln_t alignments[2], int* n_aa)
+{
+	extern char **mem_gen_alt(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, mem_alnreg_v *a, int l_query, const char *query);
+	kstring_t str;
+	kvec_t(mem_aln_t) aa;
+	int k, l;
+	char **XA = 0;
+
+	if (!(opt->flag & MEM_F_ALL))
+		XA = mem_gen_alt(opt, bns, pac, a, s->l_seq, s->seq);
+	kv_init(aa);
+	str.l = str.m = 0; str.s = 0;
+	for (k = l = 0; k < a->n; ++k) {
+		mem_alnreg_t *p = &a->a[k];
+		mem_aln_t *q;
+		if (p->score < opt->T) continue;
+		if (p->secondary >= 0 && (p->is_alt || !(opt->flag&MEM_F_ALL))) continue;
+		if (p->secondary >= 0 && p->secondary < INT_MAX && p->score < a->a[p->secondary].score * opt->drop_ratio) continue;
+		q = kv_pushp(mem_aln_t, aa);
+		*q = mem_reg2aln(opt, bns, pac, s->l_seq, s->seq, p);
+		assert(q->rid >= 0); // this should not happen with the new code
+		q->XA = XA? XA[k] : 0;
+		q->flag |= extra_flag; // flag secondary
+		if (p->secondary >= 0) q->sub = -1; // don't output sub-optimal score
+		if (l && p->secondary < 0) // if supplementary
+			q->flag |= (opt->flag&MEM_F_NO_MULTI)? 0x10000 : 0x800;
+		if (l && !p->is_alt && q->mapq > aa.a[0].mapq) q->mapq = aa.a[0].mapq;
+		++l;
+	}
+	if (aa.n == 0) { // no alignments good enough; then write an unaligned record
+		mem_aln_t t;
+		t = mem_reg2aln(opt, bns, pac, s->l_seq, s->seq, 0);
+		t.flag |= extra_flag;
+    alignments[0] = t;
+    *n_aa = 1;
+		//mem_aln2sam(opt, bns, &str, s, 1, &t, 0, m);
+	} else {
+    printf("going thru %d \n", aa.n);
+		for (k = 0; k < aa.n; ++k) {
+      alignments[k] = aa.a[k];
+      *n_aa = 1;
+			mem_aln2sam(opt, bns, &str, s, aa.n, aa.a, k, m);
+    }
+		for (k = 0; k < aa.n; ++k) free(aa.a[k].cigar);
+		free(aa.a);
+	}
+	if (XA) {
+		for (k = 0; k < a->n; ++k) free(XA[k]);
+		free(XA);
+	}
+}
 mem_alnreg_v mem_align1_core(const mem_opt_t *opt, const bwt_t *bwt, const bntseq_t *bns, const uint8_t *pac, int l_seq, char *seq, void *buf)
 {
 	int i;
