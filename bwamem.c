@@ -1079,7 +1079,7 @@ void mem_reg2result(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pa
     *n_aa = 1;
 		//mem_aln2sam(opt, bns, &str, s, 1, &t, 0, m);
 	} else {
-    printf("going thru %d \n", aa.n);
+    //printf("going thru %d \n", aa.n);
 		for (k = 0; k < aa.n; ++k) {
       alignments[k] = aa.a[k];
       *n_aa = 1;

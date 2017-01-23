@@ -516,7 +516,7 @@ int mem_sam_pe_results(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t 
 	return n;
 
 no_pairing:
-  printf("got to no pairing\n");
+  //printf("got to no pairing\n");
 	for (i = 0; i < 2; ++i) {
 		int which = -1;
 		if (a[i].n) {
