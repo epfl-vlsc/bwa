@@ -183,6 +183,11 @@ extern "C" {
   int mem_sam_pe_results(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, 
         const mem_pestat_t pes[4], uint64_t id, bseq1_t s[2], mem_alnreg_v a[2], mem_aln_t aa[2][2], int n_aa[2]);
 
+  int mem_mark_primary_se(const mem_opt_t *opt, int n, mem_alnreg_t *a, int64_t id);
+
+  void mem_reg2result(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, bseq1_t *s, mem_alnreg_v *a, 
+    int extra_flag, const mem_aln_t *m, mem_aln_t alignments[2], int* n_aa);
+
 #ifdef __cplusplus
 }
 #endif
