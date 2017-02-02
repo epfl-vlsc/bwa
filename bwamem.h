@@ -188,6 +188,8 @@ extern "C" {
   void mem_reg2result(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pac, bseq1_t *s, mem_alnreg_v *a, 
     int extra_flag, const mem_aln_t *m, mem_aln_t alignments[2], int* n_aa);
 
+  void mem_reorder_primary5(int T, mem_alnreg_v *a);
+
 #ifdef __cplusplus
 }
 #endif

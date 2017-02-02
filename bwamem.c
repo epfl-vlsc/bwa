@@ -1080,12 +1080,14 @@ void mem_reg2result(const mem_opt_t *opt, const bntseq_t *bns, const uint8_t *pa
 		//mem_aln2sam(opt, bns, &str, s, 1, &t, 0, m);
 	} else {
     //printf("going thru %d \n", aa.n);
-		for (k = 0; k < aa.n; ++k) {
+    alignments[0] = aa.a[0];
+    *n_aa = 1;
+		/*for (k = 0; k < aa.n; ++k) {
       alignments[k] = aa.a[k];
       *n_aa = 1;
 			//mem_aln2sam(opt, bns, &str, s, aa.n, aa.a, k, m);
-    }
-		for (k = 0; k < aa.n; ++k) free(aa.a[k].cigar);
+    }*/
+		for (k = 1; k < aa.n; ++k) free(aa.a[k].cigar);
 		free(aa.a);
 	}
 	if (XA) {
